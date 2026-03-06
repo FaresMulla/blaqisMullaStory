@@ -1,0 +1,1883 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      יֶלֶד קָטָן הָלַךְ לַגָּן - סיפור אינטראקטיבי שנוצר על ידי המדריכה בלקיס
+      מולא - המחבר י"ד קמזון
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- icon -->
+    <link rel="icon" href="./images/boy_start.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── THEME ─────────────────────────────────────────────── */
+      :root {
+        --bg: #fff8ef;
+        --text: #2d1b00;
+        --text2: #7a5230;
+        --accent: #e8873a;
+        --gold: #d4a84b;
+        --card: rgba(255, 252, 243, 0.96);
+        --cb: rgba(212, 168, 75, 0.3);
+        --sky1: #5dbcd2;
+        --sky2: #9adbef;
+        --grass: #5bb74a;
+        --sh-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+        --sh-md: 0 8px 24px rgba(0, 0, 0, 0.16);
+        --sh-lg: 0 16px 48px rgba(0, 0, 0, 0.22);
+        --r: 20px;
+      }
+      [data-theme="dark"] {
+        --bg: #0b1929;
+        --text: #f0e6d0;
+        --text2: #c4a97a;
+        --accent: #f5a623;
+        --gold: #c4922a;
+        --card: rgba(11, 25, 41, 0.96);
+        --cb: rgba(196, 146, 42, 0.3);
+        --sky1: #061020;
+        --sky2: #0d1f3c;
+        --grass: #14301a;
+        --sh-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+        --sh-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+        --sh-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
+      }
+
+      /* ── RESET ─────────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Rubik", "Arial", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      #app {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      /* ── SCREENS ───────────────────────────────────────────── */
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+      }
+      .screen.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      /* ── THEME TOGGLE ──────────────────────────────────────── */
+      #theme-btn {
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 900;
+        background: var(--card);
+        border: 2px solid var(--cb);
+        border-radius: 50%;
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--sh-sm);
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+        outline: none;
+      }
+      #theme-btn:hover {
+        transform: scale(1.1);
+        box-shadow: var(--sh-md);
+      }
+
+      /* ── NAV HINT ──────────────────────────────────────────── */
+      #nav-hint {
+        position: fixed;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 900;
+        background: var(--card);
+        border: 1px solid var(--cb);
+        border-radius: 30px;
+        padding: 7px 18px;
+        font-size: 13px;
+        color: var(--text2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--sh-sm);
+        opacity: 0.8;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      /* ── PROGRESS DOTS ─────────────────────────────────────── */
+      #prog-bar {
+        position: fixed;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 900;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.35s;
+      }
+      #prog-bar.vis {
+        opacity: 1;
+      }
+      .pdot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--text2);
+        opacity: 0.28;
+        transition: all 0.3s;
+        position: relative;
+      }
+      .pdot.done {
+        opacity: 0.55;
+        background: var(--gold);
+      }
+      .pdot.cur {
+        opacity: 1;
+        background: var(--accent);
+        transform: scale(1.45);
+      }
+      .pdot .de {
+        position: absolute;
+        top: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        white-space: nowrap;
+      }
+      .pdot.done .de,
+      .pdot.cur .de {
+        opacity: 1;
+      }
+
+      /* ── BANNER ────────────────────────────────────────────── */
+      #banner {
+        position: fixed;
+        top: 64px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 900;
+        background: var(--accent);
+        color: #fff;
+        padding: 6px 22px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: clamp(13px, 1.8vw, 17px);
+        box-shadow: var(--sh-md);
+        opacity: 0;
+        transition: opacity 0.4s;
+        white-space: nowrap;
+      }
+      #banner.vis {
+        opacity: 1;
+      }
+
+      /* ════════════════════════════════════════════════════════
+       INTRO SCREEN
+    ════════════════════════════════════════════════════════ */
+      #scr-intro {
+        background: linear-gradient(
+          160deg,
+          var(--sky1),
+          var(--sky2) 50%,
+          var(--grass)
+        );
+      }
+      .i-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+        text-align: center;
+        padding: 20px;
+      }
+      .i-title {
+        font-size: clamp(34px, 7vw, 86px);
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        line-height: 1.3;
+      }
+      .i-title span {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(28px);
+        animation: slideUp 0.5s ease forwards;
+      }
+      .i-title span:nth-child(1) {
+        animation-delay: 0.2s;
+      }
+      .i-title span:nth-child(2) {
+        animation-delay: 0.5s;
+      }
+      .i-title span:nth-child(3) {
+        animation-delay: 0.8s;
+      }
+      .i-title span:nth-child(4) {
+        animation-delay: 1.1s;
+      }
+      .i-animals {
+        display: flex;
+        gap: 14px;
+        opacity: 0;
+        animation: fadeIn 0.6s 1.8s ease forwards;
+      }
+      .i-animals span {
+        font-size: clamp(26px, 4vw, 46px);
+        animation: float 3s ease-in-out infinite;
+      }
+      .i-animals span:nth-child(2) {
+        animation-delay: 0.4s;
+      }
+      .i-animals span:nth-child(3) {
+        animation-delay: 0.8s;
+      }
+      .i-animals span:nth-child(4) {
+        animation-delay: 1.2s;
+      }
+      .i-animals span:nth-child(5) {
+        animation-delay: 1.6s;
+      }
+      .i-animals span:nth-child(6) {
+        animation-delay: 2s;
+      }
+      .i-animals span:nth-child(7) {
+        animation-delay: 2.4s;
+      }
+      .i-sub {
+        font-size: clamp(14px, 2.2vw, 19px);
+        color: rgba(255, 255, 255, 0.9);
+        opacity: 0;
+        animation: fadeIn 0.6s 2.2s ease forwards;
+      }
+      .i-btn {
+        margin-top: 6px;
+        background: #fff;
+        color: var(--accent);
+        border: none;
+        border-radius: 50px;
+        padding: 14px 46px;
+        font-family: inherit;
+        font-size: clamp(17px, 2.8vw, 23px);
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: var(--sh-md);
+        opacity: 0;
+        animation: bounceIn 0.6s 2.6s ease forwards;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .i-btn:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: var(--sh-lg);
+      }
+
+      /* ════════════════════════════════════════════════════════
+       MAP SCREEN
+    ════════════════════════════════════════════════════════ */
+      #scr-map {
+        background: linear-gradient(
+          180deg,
+          var(--sky1) 0%,
+          var(--sky2) 55%,
+          var(--grass) 100%
+        );
+        padding: 0;
+      }
+      .map-wrap {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      /* Clouds */
+      .cloud {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.82);
+        border-radius: 50px;
+        animation: drift linear infinite;
+      }
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        background: inherit;
+        border-radius: 50%;
+      }
+      .c1 {
+        width: 88px;
+        height: 28px;
+        top: 7%;
+        left: 12%;
+        animation-duration: 40s;
+      }
+      .c1::before {
+        width: 50px;
+        height: 44px;
+        top: -20px;
+        left: 14px;
+      }
+      .c1::after {
+        width: 34px;
+        height: 34px;
+        top: -14px;
+        right: 13px;
+      }
+      .c2 {
+        width: 116px;
+        height: 33px;
+        top: 13%;
+        left: 48%;
+        animation-duration: 55s;
+        animation-delay: -22s;
+      }
+      .c2::before {
+        width: 58px;
+        height: 52px;
+        top: -24px;
+        left: 19px;
+      }
+      .c2::after {
+        width: 42px;
+        height: 38px;
+        top: -17px;
+        right: 17px;
+      }
+      .c3 {
+        width: 78px;
+        height: 24px;
+        top: 5%;
+        left: 72%;
+        animation-duration: 46s;
+        animation-delay: -30s;
+      }
+      .c3::before {
+        width: 40px;
+        height: 36px;
+        top: -17px;
+        left: 12px;
+      }
+      [data-theme="dark"] .cloud {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Ground */
+      .ground {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 18%;
+        background: linear-gradient(180deg, var(--grass), #2e6a20);
+      }
+
+      /* Trees */
+      .tree {
+        position: absolute;
+        bottom: 14%;
+        font-size: clamp(26px, 3.2vw, 42px);
+        animation: float 3.5s ease-in-out infinite;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        z-index: 4;
+      }
+
+      /* SVG path */
+      .map-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        z-index: 2;
+      }
+
+      /* Location icons */
+      .loc {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        transform: translate(-50%, -50%);
+        z-index: 5;
+      }
+      .loc-ico {
+        font-size: clamp(30px, 5vw, 54px);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        animation: float 4s ease-in-out infinite;
+      }
+      .loc-lbl {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 2px 9px;
+        font-size: clamp(10px, 1.4vw, 13px);
+        font-weight: 700;
+        color: var(--text);
+        box-shadow: var(--sh-sm);
+        white-space: nowrap;
+      }
+
+      /* Waypoints */
+      .wp {
+        position: absolute;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translate(-50%, -50%);
+        z-index: 6;
+        transition: all 0.4s ease;
+        box-shadow: var(--sh-sm);
+        width: clamp(34px, 4.2vw, 50px);
+        height: clamp(34px, 4.2vw, 50px);
+        font-size: clamp(16px, 2.2vw, 26px);
+      }
+      .wp.unvisited {
+        background: rgba(255, 255, 255, 0.55);
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(4px);
+      }
+      .wp.unvisited::after {
+        content: "?";
+        font-size: clamp(12px, 1.8vw, 18px);
+        font-weight: 900;
+        color: var(--text2);
+        position: absolute;
+      }
+      .wp.visited {
+        background: #fff;
+        border: 3px solid var(--gold);
+      }
+      .wp.cur {
+        background: var(--accent);
+        border: 3px solid #fff;
+        animation: pls 1.5s ease-in-out infinite;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+
+      /* Boy on map */
+      #boy {
+        position: absolute;
+        z-index: 10;
+        transform: translate(-50%, -50%);
+        transition:
+          left 1.4s cubic-bezier(0.45, 0.05, 0.55, 0.95),
+          top 1.4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      }
+      .boy-badge {
+        width: clamp(42px, 5.2vw, 60px);
+        height: clamp(42px, 5.2vw, 60px);
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(22px, 3.2vw, 36px);
+        position: relative;
+        box-shadow:
+          0 4px 14px rgba(0, 0, 0, 0.25),
+          0 0 0 3px var(--accent);
+        animation: float 2.5s ease-in-out infinite;
+        overflow: hidden;
+      }
+      .boy-badge img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 50%;
+        position: absolute;
+        inset: 0;
+      }
+      .boy-badge .be {
+        position: absolute;
+      }
+      #boy.walking .boy-badge {
+        animation: walk 0.38s ease-in-out infinite;
+      }
+
+      /* ════════════════════════════════════════════════════════
+       ENCOUNTER SCREEN
+    ════════════════════════════════════════════════════════ */
+      #scr-enc {
+        padding: 0;
+      }
+      .enc-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transition: background 0.7s ease;
+      }
+      .enc-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.65) 0%,
+          rgba(0, 0, 0, 0.12) 45%,
+          rgba(0, 0, 0, 0.04) 100%
+        );
+      }
+      .enc-inner {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 28px 76px;
+      }
+
+      /* Top: boy + animal */
+      .enc-top {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 860px;
+        flex: 1;
+        gap: 16px;
+        padding-top: 16px;
+      }
+
+      /* Boy side */
+      .boy-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+        max-width: 260px;
+      }
+      .boy-scene-img {
+        width: clamp(100px, 16vw, 210px);
+        height: clamp(130px, 20vw, 260px);
+        object-fit: contain;
+        object-position: bottom;
+        filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.4));
+        animation: float 3s ease-in-out infinite;
+      }
+      .boy-scene-emoji {
+        font-size: clamp(70px, 11vw, 130px);
+        animation: float 3s ease-in-out infinite;
+        filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.4));
+        display: none;
+        line-height: 1;
+      }
+
+      /* Animal side */
+      .ani-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        max-width: 300px;
+      }
+      .ani-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(130px, 19vw, 230px);
+        height: clamp(130px, 19vw, 230px);
+      }
+      .ani-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        position: absolute;
+        filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.4));
+        transition:
+          filter 0.8s ease,
+          transform 0.5s ease;
+      }
+      .ani-emo {
+        font-size: clamp(72px, 11vw, 124px);
+        position: absolute;
+        filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.4));
+        transition: filter 0.8s ease;
+        line-height: 1;
+      }
+      /* silhouette */
+      .sil .ani-img,
+      .sil .ani-emo {
+        filter: brightness(0) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7));
+      }
+      .sil .q-ov {
+        opacity: 1;
+      }
+      .q-ov {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .q-mark {
+        font-size: clamp(44px, 7vw, 84px);
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.92);
+        text-shadow: 0 0 18px rgba(255, 255, 255, 0.6);
+        animation: pls 1.2s ease-in-out infinite;
+      }
+      /* reveal */
+      .rev .ani-img,
+      .rev .ani-emo {
+        filter: brightness(1) drop-shadow(0 8px 18px rgba(255, 200, 50, 0.5));
+        animation: bounceIn 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+      }
+      .ani-name {
+        background: #fff;
+        color: var(--accent);
+        border-radius: 50px;
+        padding: 7px 22px;
+        font-size: clamp(19px, 3.2vw, 30px);
+        font-weight: 900;
+        box-shadow: var(--sh-md);
+        opacity: 0;
+        transform: translateY(18px) scale(0.8);
+        transition: all 0.4s 0.5s ease;
+        white-space: nowrap;
+      }
+      .rev .ani-name {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      /* sparkles */
+      .sparks {
+        position: absolute;
+        inset: -18px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s 0.4s;
+      }
+      .rev .sparks {
+        opacity: 1;
+      }
+      .sp {
+        position: absolute;
+        font-size: 15px;
+        animation: spAnim 1s ease-in-out infinite;
+      }
+
+      /* Prompt */
+      .enc-prompt {
+        color: #fff;
+        font-size: clamp(16px, 2.8vw, 24px);
+        font-weight: 500;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        margin-bottom: 6px;
+        opacity: 0.92;
+      }
+
+      /* Story text */
+      .story-area {
+        width: 100%;
+        max-width: 660px;
+        margin: 0 auto;
+        opacity: 0;
+        transform: translateY(16px);
+        transition:
+          opacity 0.6s,
+          transform 0.6s;
+      }
+      .story-area.vis {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .story-card {
+        background: var(--card);
+        border: 1px solid var(--cb);
+        border-radius: var(--r);
+        padding: clamp(18px, 2.8vw, 34px) clamp(22px, 3.8vw, 46px);
+        box-shadow: var(--sh-lg);
+      }
+      .sl {
+        font-size: clamp(17px, 2.6vw, 26px);
+        font-weight: 500;
+        color: var(--text);
+        line-height: 1.75;
+        opacity: 0;
+        transform: translateY(8px);
+        animation: lineIn 0.38s ease forwards;
+      }
+      .sl.sep {
+        height: 10px;
+        opacity: 1;
+        transform: none;
+      }
+      .sl.dlg {
+        font-weight: 700;
+        color: var(--accent);
+        font-size: clamp(19px, 2.9vw, 29px);
+      }
+      .sl.rsp {
+        color: var(--text2);
+      }
+
+      /* Continue pill */
+      .cont-wrap {
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+      }
+      .cont-pill {
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        border-radius: 30px;
+        padding: 7px 18px;
+        color: #fff;
+        font-size: clamp(11px, 1.6vw, 15px);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        animation: blink 2s ease-in-out infinite;
+      }
+
+      /* ════════════════════════════════════════════════════════
+       RETURN SCREEN
+    ════════════════════════════════════════════════════════ */
+      #scr-ret {
+        background: linear-gradient(
+          160deg,
+          var(--sky1),
+          var(--sky2) 50%,
+          var(--grass)
+        );
+      }
+      .ret-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        max-width: 780px;
+        width: 90%;
+        text-align: center;
+      }
+      .ret-boy {
+        font-size: clamp(48px, 8vw, 88px);
+        animation: float 3s ease-in-out infinite;
+      }
+      .ret-animals {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 11px;
+        padding: 14px 18px;
+        background: var(--card);
+        border-radius: var(--r);
+        border: 1px solid var(--cb);
+        box-shadow: var(--sh-md);
+      }
+      .ra {
+        font-size: clamp(26px, 4vw, 46px);
+        animation: float 2.5s ease-in-out infinite;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18));
+      }
+      .ra:nth-child(2) {
+        animation-delay: 0.3s;
+      }
+      .ra:nth-child(3) {
+        animation-delay: 0.6s;
+      }
+      .ra:nth-child(4) {
+        animation-delay: 0.9s;
+      }
+      .ra:nth-child(5) {
+        animation-delay: 1.2s;
+      }
+      .ra:nth-child(6) {
+        animation-delay: 1.5s;
+      }
+      .ra:nth-child(7) {
+        animation-delay: 1.8s;
+      }
+      .ret-poem {
+        background: var(--card);
+        border: 1px solid var(--cb);
+        border-radius: var(--r);
+        padding: 22px 30px;
+        box-shadow: var(--sh-md);
+        opacity: 0;
+        transition: opacity 0.8s;
+      }
+      .ret-poem p {
+        font-size: clamp(15px, 2.3vw, 22px);
+        font-weight: 500;
+        line-height: 1.85;
+        color: var(--text);
+      }
+      .ret-poem .hi {
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      /* ════════════════════════════════════════════════════════
+       END SCREEN
+    ════════════════════════════════════════════════════════ */
+      #scr-end {
+        background: linear-gradient(
+          160deg,
+          var(--sky1),
+          var(--sky2),
+          var(--grass)
+        );
+      }
+      .end-wrap {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+        padding: 20px;
+      }
+      .end-star {
+        font-size: clamp(56px, 10vw, 116px);
+        animation:
+          bounceIn 0.6s ease,
+          float 3s 0.6s ease-in-out infinite;
+      }
+      .end-title {
+        font-size: clamp(38px, 8vw, 92px);
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+      .end-sub {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: clamp(15px, 2.4vw, 21px);
+      }
+      .end-btn {
+        background: #fff;
+        color: var(--accent);
+        border: none;
+        border-radius: 50px;
+        padding: 13px 38px;
+        font-family: inherit;
+        font-size: clamp(15px, 2.2vw, 21px);
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: var(--sh-md);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .end-btn:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: var(--sh-lg);
+      }
+
+      /* ════════════════════════════════════════════════════════
+       KEYFRAMES
+    ════════════════════════════════════════════════════════ */
+      @keyframes slideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+      @keyframes walk {
+        0%,
+        100% {
+          transform: rotate(-6deg) translateY(0);
+        }
+        50% {
+          transform: rotate(6deg) translateY(-5px);
+        }
+      }
+      @keyframes pls {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.09);
+        }
+      }
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.18);
+          opacity: 0;
+        }
+        60% {
+          transform: scale(1.16);
+          opacity: 1;
+        }
+        80% {
+          transform: scale(0.94);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes lineIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes drift {
+        from {
+          transform: translateX(110vw);
+        }
+        to {
+          transform: translateX(-30vw);
+        }
+      }
+      @keyframes spAnim {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.5) rotate(180deg);
+          opacity: 0.55;
+        }
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* ── MOBILE ─────────────────────────────────────────────── */
+      @media (max-width: 600px) {
+        .enc-top {
+          flex-direction: column-reverse;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding-top: 56px;
+        }
+        .boy-side,
+        .ani-side {
+          max-width: 100%;
+        }
+        .boy-scene-img {
+          width: 80px;
+          height: 100px;
+        }
+        .ani-wrap {
+          width: 100px;
+          height: 100px;
+        }
+        .story-card {
+          padding: 14px 16px;
+        }
+        .i-title {
+          font-size: 28px;
+        }
+        .wp {
+          width: 28px;
+          height: 28px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- Controls -->
+      <button
+        id="theme-btn"
+        onclick="
+          toggleTheme();
+          event.stopPropagation();
+        "
+        title="מצב כהה/בהיר"
+      >
+        ☀️
+      </button>
+      <div id="banner"></div>
+      <div id="prog-bar"></div>
+      <div id="nav-hint">
+        <span>⌨️</span>Space &nbsp;<span>🖱️</span>לחיצה
+        &nbsp;<span>⬇️</span>גלגלת
+        <!-- יצירת המדריכה בלקיס מולא -->
+        <span style="font-size: 14px; margin-left: 6px"
+          >📜 יצירת המדריכה בלקיס מולא</span
+        >
+      </div>
+
+      <!-- ═══ INTRO ═══ -->
+      <div id="scr-intro" class="screen active">
+        <div class="i-wrap">
+          <div class="i-title">
+            <span>יֶלֶד&nbsp;</span><span>קָטָן&nbsp;</span
+            ><span>הָלַךְ&nbsp;</span><span>לַגָּן</span>
+          </div>
+          <div class="i-animals">
+            <span>🐓</span><span>🐦</span><span>🐱</span><span>🦋</span
+            ><span>🐶</span><span>🐐</span><span>🐇</span>
+          </div>
+          <p class="i-sub">
+            סיפור ילדים עם דמויות מהדרך - יצירת המדריכה בלקיס מולא
+          </p>
+          <button
+            class="i-btn"
+            onclick="
+              startStory();
+              event.stopPropagation();
+            "
+          >
+            ➤ בוא נלך לגן!
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ MAP ═══ -->
+      <div id="scr-map" class="screen">
+        <div class="map-wrap">
+          <div class="cloud c1"></div>
+          <div class="cloud c2"></div>
+          <div class="cloud c3"></div>
+          <div class="ground"></div>
+          <div class="tree" style="left: 7%; bottom: 14%">🌳</div>
+          <div
+            class="tree"
+            style="left: 18%; bottom: 15%; animation-delay: 0.9s"
+          >
+            🌿
+          </div>
+          <div
+            class="tree"
+            style="left: 44%; bottom: 15%; animation-delay: 0.5s"
+          >
+            🌲
+          </div>
+          <div
+            class="tree"
+            style="left: 67%; bottom: 14%; animation-delay: 1.4s"
+          >
+            🌳
+          </div>
+          <div
+            class="tree"
+            style="left: 81%; bottom: 15%; animation-delay: 0.7s"
+          >
+            🌿
+          </div>
+
+          <!-- SVG winding road -->
+          <svg class="map-svg" viewBox="0 0 100 56" preserveAspectRatio="none">
+            <!-- Road shadow -->
+            <path
+              d="M87,33.6 C82,35.5 78,37.5 73,38.1 C68,38.7 66,22 62,23.5 C58,25 56,36 51,36.4 C46,36.8 44,40 40,40.3 C36,40.6 33,29.5 30,29.1 C27,28.7 23,37.8 20,37.5 C17,37.2 15,29.5 12,29.1 C9,28.7 7,27.5 5,26.9"
+              fill="none"
+              stroke="rgba(0,0,0,0.18)"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+            <!-- Road (dashed) -->
+            <path
+              id="road"
+              d="M87,33.6 C82,35.5 78,37.5 73,38.1 C68,38.7 66,22 62,23.5 C58,25 56,36 51,36.4 C46,36.8 44,40 40,40.3 C36,40.6 33,29.5 30,29.1 C27,28.7 23,37.8 20,37.5 C17,37.2 15,29.5 12,29.1 C9,28.7 7,27.5 5,26.9"
+              fill="none"
+              stroke="#D4A84B"
+              stroke-width="2.8"
+              stroke-linecap="round"
+              stroke-dasharray="4.5,3"
+            />
+          </svg>
+
+          <!-- Destination labels -->
+          <div class="loc" style="left: 88%; top: 52%">
+            <div class="loc-ico">🏠</div>
+            <div class="loc-lbl">הַבַּיִת</div>
+          </div>
+          <div class="loc" style="left: 5%; top: 43%">
+            <div class="loc-ico">🏫</div>
+            <div class="loc-lbl">הַגָּן</div>
+          </div>
+
+          <!-- Waypoints injected by JS -->
+          <div id="wps"></div>
+
+          <!-- Boy character -->
+          <div id="boy" style="left: 88%; top: 52%">
+            <div class="boy-badge">
+              <img
+                src="images/boy_start.png"
+                onerror="this.style.display = 'none'"
+                alt=""
+              />
+              <span class="be">
+                <!-- 🧒 -->
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ ENCOUNTER ═══ -->
+      <div id="scr-enc" class="screen">
+        <div class="enc-bg" id="enc-bg"></div>
+        <div class="enc-inner">
+          <div class="enc-top">
+            <!-- Boy (first in DOM = RIGHT in RTL) -->
+            <div class="boy-side">
+              <img
+                class="boy-scene-img"
+                id="bs-img"
+                src=""
+                alt=""
+                onerror="
+                  this.style.display = 'none';
+                  document.getElementById('bs-emo').style.display = 'block';
+                "
+              />
+              <div class="boy-scene-emoji" id="bs-emo">
+                <!-- 🧒 -->
+              </div>
+            </div>
+            <!-- Animal (second in DOM = LEFT in RTL) -->
+            <div class="ani-side">
+              <div class="ani-wrap sil" id="ani-wrap">
+                <div class="ani-emo" id="a-emo"></div>
+                <img
+                  class="ani-img"
+                  id="a-img"
+                  src=""
+                  alt=""
+                  onload="document.getElementById('a-emo').style.opacity = '0'"
+                  onerror="
+                    this.style.display = 'none';
+                    document.getElementById('a-emo').style.opacity = '1';
+                  "
+                />
+                <div class="q-ov"><span class="q-mark">?</span></div>
+                <div class="sparks" id="sparks">
+                  <span class="sp" style="top: 4%; left: 8%">⭐</span>
+                  <span
+                    class="sp"
+                    style="top: 4%; right: 8%; animation-delay: 0.2s"
+                    >✨</span
+                  >
+                  <span
+                    class="sp"
+                    style="bottom: 8%; left: 4%; animation-delay: 0.4s"
+                    >⭐</span
+                  >
+                  <span
+                    class="sp"
+                    style="bottom: 8%; right: 4%; animation-delay: 0.6s"
+                    >✨</span
+                  >
+                  <span
+                    class="sp"
+                    style="top: 48%; left: 1%; animation-delay: 0.1s"
+                    >🌟</span
+                  >
+                  <span
+                    class="sp"
+                    style="top: 48%; right: 1%; animation-delay: 0.3s"
+                    >✨</span
+                  >
+                </div>
+              </div>
+              <div class="ani-name" id="a-name"></div>
+            </div>
+          </div>
+
+          <div class="enc-prompt" id="enc-prompt">מי הוא? 👀</div>
+
+          <div class="story-area" id="story-area">
+            <div class="story-card" id="story-card"></div>
+          </div>
+
+          <div class="cont-wrap">
+            <div class="cont-pill">← לחץ להמשך</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ RETURN ═══ -->
+      <div id="scr-ret" class="screen">
+        <div class="ret-wrap">
+          <div class="ret-boy">
+            <!-- <span>🧒</span> -->
+          </div>
+          <div class="ret-animals">
+            <span class="ra">🐓</span><span class="ra">🐦</span
+            ><span class="ra">🐱</span> <span class="ra">🦋</span
+            ><span class="ra">🐶</span><span class="ra">🐐</span>
+            <span class="ra">🐇</span>
+          </div>
+          <div class="ret-poem" id="ret-poem">
+            <p>הַיֶּלֶד הַקָּטֹן שָׁב מִן הַגָּן —</p>
+            <p>וְהִנֵּה הַצִּפּוֹר, הַפַּרְפַּר וְהַגְּדִי,</p>
+            <p>הִנֵּה הַחַתְלוּל, הִנֵּה יָקְטָן,</p>
+            <p>וְהִנֵּה הַתַּרְנְגוֹל וְגַם הַשָּׁפָן.</p>
+            <br />
+            <p class="hi">
+              בָּרוּךְ אַתָּה בַּגָּן, בָּרוּךְ אַתָּה בַּבַּיִת,
+            </p>
+            <p class="hi">שָׁלוֹם, שָׁלוֹם וּבְרָכָה! וְדֶרֶךְ צְלָחָה!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ END ═══ -->
+      <div id="scr-end" class="screen">
+        <div class="end-wrap">
+          <div class="end-star">🌟</div>
+          <div class="end-title">כָּל הַכָּבוֹד!</div>
+          <p class="end-sub">הַיֶּלֶד הָיָה יֶלֶד טוֹב בַּגָּן!</p>
+          <button
+            class="end-btn"
+            onclick="
+              restartStory();
+              event.stopPropagation();
+            "
+          >
+            🔄 שחק שוב
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- #app -->
+
+    <script>
+      /* ═══════════════════════════════════════════════════════════
+   STORY DATA
+═══════════════════════════════════════════════════════════ */
+      const STOPS = [
+        {
+          animalHe: "תַּרְנְגוֹל",
+          simple: "תרנגול",
+          // emoji: "🐓",
+          boyImg: "images/boy_rooster.png",
+          aniImg: "images/rooster.png",
+          bg: "images/bg_farm.jpg",
+          grad: "radial-gradient(ellipse at 70% 30%,#FFD87A,#87C96B 50%,#4A9FD4)",
+          pos: { x: 73, y: 68 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה תַּרְנְגוֹל קוֹרֵא בְּקוֹל.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לַתַּרְנְגוֹל:", c: "" },
+            { t: "תַּרְנְגוֹל, תַּרְנְגוֹל,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַתַּרְנְגוֹל:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+        {
+          animalHe: "צִפּוֹר",
+          simple: "ציפור",
+          // emoji: "🐦",
+          boyImg: "images/boy_bird.png",
+          aniImg: "images/bird.png",
+          bg: "images/bg_tree.jpg",
+          grad: "radial-gradient(ellipse at 60% 20%,#B8E4F9,#76C442 60%,#4A9FD4)",
+          pos: { x: 62, y: 42 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה צִפּוֹר בְּרֹאשׁ אִילָן.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לַצִּפּוֹר:", c: "" },
+            { t: "צִפּוֹר, צִפּוֹר,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמְרָה הַצִּפּוֹר:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+        {
+          animalHe: "חָתוּל",
+          simple: "חתול",
+          // emoji: "🐱",
+          boyImg: "images/boy_cat.png",
+          aniImg: "images/cat.png",
+          bg: "images/bg_street.jpg",
+          grad: "radial-gradient(ellipse at 50% 40%,#FFA07A,#98D46A 55%,#87CEEB)",
+          pos: { x: 51, y: 65 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה חָתוּל וְחַתְלוּל.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לַחָתוּל:", c: "" },
+            { t: "חָתוּל, חָתוּל,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַחָתוּל:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+        {
+          animalHe: "פַּרְפַּר",
+          simple: "פרפר",
+          // emoji: "🦋",
+          boyImg: "images/boy_butterfly.png",
+          aniImg: "images/butterfly.png",
+          bg: "images/bg_flower.jpg",
+          grad: "radial-gradient(ellipse at 40% 60%,#FFB7E4,#A8E6CF 50%,#7EC8E3)",
+          pos: { x: 40, y: 72 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה פַּרְפַּר בְּרֹאשׁ נִצָּן.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לַפַּרְפַּר:", c: "" },
+            { t: "פַּרְפַּר, פַּרְפַּר,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַפַּרְפַּר:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+        {
+          animalHe: "יָקְטָן",
+          simple: "כלבלב",
+          // emoji: "🐶",
+          boyImg: "images/boy_dog.png",
+          aniImg: "images/dog.png",
+          bg: "images/bg_street.jpg",
+          grad: "radial-gradient(ellipse at 60% 50%,#FFEAA7,#81ECEC 55%,#74B9FF)",
+          pos: { x: 30, y: 52 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה כַּלְבָּלָב וּשְׁמוֹ יָקְטָן.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לְיָקְטָן:", c: "" },
+            { t: "יָקְטָן, יָקְטָן,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַכַּלְבָּלָב:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+        {
+          animalHe: "גְּדִי",
+          simple: "גדי",
+          // emoji: "🐐",
+          boyImg: "images/boy_goat.png",
+          aniImg: "images/goat.png",
+          bg: "images/bg_farm.jpg",
+          grad: "radial-gradient(ellipse at 30% 40%,#DFE6E9,#A8D8A8 55%,#87CEEB)",
+          pos: { x: 20, y: 67 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה גְּדִי, גְּדִי לָבָן.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לַגְּדִי:", c: "" },
+            { t: "גְּדִי, גְּדִי,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַגְּדִי:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+        {
+          animalHe: "שָׁפָן",
+          simple: "שפן",
+          // emoji: "🐇",
+          boyImg: "images/boy_rabbit.png",
+          aniImg: "images/rabbit.png",
+          bg: "images/bg_flower.jpg",
+          grad: "radial-gradient(ellipse at 50% 50%,#E8D5C4,#B2D8B2 55%,#87CEEB)",
+          pos: { x: 12, y: 52 },
+          lines: [
+            { t: "יֶלֶד קָטָן הָלַךְ לַגָּן —", c: "" },
+            { t: "רָאָה שָׁפָן קָטֹן, שְׁמוֹ לָבָן.", c: "" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַיֶּלֶד לַשָּׁפָן:", c: "" },
+            { t: "שָׁפָן, שָׁפָן,", c: "dlg" },
+            { t: "אֲנִי הוֹלֵךְ לַגָּן — שָׁלוֹם!", c: "dlg" },
+            { t: "", c: "sep" },
+            { t: "אָמַר הַשָּׁפָן:", c: "" },
+            { t: "שָׁלוֹם, שָׁלוֹם וּבְרָכָה!", c: "rsp" },
+            { t: "וְדֶרֶךְ צְלָחָה!", c: "rsp" },
+          ],
+        },
+      ];
+
+      /* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+      const HOME = { x: 88, y: 52 };
+      const GARDEN = { x: 5, y: 43 };
+
+      let screen = "intro"; // intro | map | encounter | return | end
+      let stop = -1; // -1 = home, 0-6 = stops
+      let phase = 0; // 0=sil 1=rev 2=txt (encounter)
+      let visited = [];
+      let busy = false;
+
+      /* ═══════════════════════════════════════════════════════════
+   DOM
+═══════════════════════════════════════════════════════════ */
+      const scrs = {
+        intro: document.getElementById("scr-intro"),
+        map: document.getElementById("scr-map"),
+        enc: document.getElementById("scr-enc"),
+        ret: document.getElementById("scr-ret"),
+        end: document.getElementById("scr-end"),
+      };
+
+      /* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+      function init() {
+        buildWaypoints();
+        buildProgress();
+        setBoy(HOME);
+      }
+
+      function buildWaypoints() {
+        const c = document.getElementById("wps");
+        c.innerHTML = "";
+        STOPS.forEach((s, i) => {
+          const d = document.createElement("div");
+          d.className = "wp unvisited";
+          d.id = `wp${i}`;
+          d.style.left = s.pos.x + "%";
+          d.style.top = s.pos.y + "%";
+          c.appendChild(d);
+        });
+      }
+
+      function buildProgress() {
+        const b = document.getElementById("prog-bar");
+        b.innerHTML = "";
+        STOPS.forEach((s, i) => {
+          const d = document.createElement("div");
+          d.className = "pdot";
+          d.id = `pd${i}`;
+          const e = document.createElement("span");
+          e.className = "de";
+          e.textContent = s.emoji;
+          d.appendChild(e);
+          b.appendChild(d);
+        });
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   SCREEN SWITCH
+═══════════════════════════════════════════════════════════ */
+      function showScreen(name) {
+        screen = name;
+        Object.entries(scrs).forEach(([k, el]) => {
+          el.classList.toggle("active", k === name);
+        });
+        updateProgress();
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   BOY & WAYPOINTS
+═══════════════════════════════════════════════════════════ */
+      function setBoy(pos, walk = false) {
+        const el = document.getElementById("boy");
+        el.classList.toggle("walking", walk);
+        el.style.left = pos.x + "%";
+        el.style.top = pos.y + "%";
+        if (walk) setTimeout(() => el.classList.remove("walking"), 1500);
+      }
+
+      function setWP(i, state) {
+        const wp = document.getElementById(`wp${i}`);
+        if (!wp) return;
+        wp.className = "wp " + state;
+        if (state !== "unvisited") wp.textContent = STOPS[i].emoji;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════════════════════ */
+      function updateProgress() {
+        const vis = screen === "map" || screen === "enc";
+        document.getElementById("prog-bar").classList.toggle("vis", vis);
+        STOPS.forEach((_, i) => {
+          const d = document.getElementById(`pd${i}`);
+          if (!d) return;
+          d.classList.remove("done", "cur");
+          if (visited.includes(i)) d.classList.add("done");
+          if (i === stop && screen === "enc") d.classList.add("cur");
+        });
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   BANNER
+═══════════════════════════════════════════════════════════ */
+      function banner(txt) {
+        const b = document.getElementById("banner");
+        b.textContent = txt;
+        b.classList.add("vis");
+        clearTimeout(banner._t);
+        banner._t = setTimeout(() => b.classList.remove("vis"), 2600);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   MAIN ADVANCE
+═══════════════════════════════════════════════════════════ */
+      function advance() {
+        if (busy) return;
+        switch (screen) {
+          case "intro":
+            startStory();
+            break;
+          case "map":
+            goNextStop();
+            break;
+          case "enc":
+            advanceEnc();
+            break;
+          case "ret":
+            showPoem();
+            break;
+          case "end":
+            restartStory();
+            break;
+        }
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   STORY FLOW
+═══════════════════════════════════════════════════════════ */
+      function startStory() {
+        visited = [];
+        stop = -1;
+        phase = 0;
+        buildWaypoints();
+        setBoy(HOME);
+        showScreen("map");
+        setTimeout(() => banner("בוא נלך! 🎒"), 500);
+      }
+
+      function goNextStop() {
+        const next = stop + 1;
+        if (next >= STOPS.length) {
+          goGarden();
+          return;
+        }
+        busy = true;
+        stop = next;
+        setWP(stop, "cur");
+        setBoy(STOPS[stop].pos, true);
+        setTimeout(() => {
+          busy = false;
+          openEnc(stop);
+        }, 1650);
+      }
+
+      function goGarden() {
+        busy = true;
+        setBoy(GARDEN, true);
+        setTimeout(() => {
+          busy = false;
+          showScreen("ret");
+        }, 1800);
+      }
+
+      function openEnc(idx) {
+        const s = STOPS[idx];
+        phase = 0;
+
+        // Background
+        const bg = document.getElementById("enc-bg");
+        bg.style.backgroundImage = `url('${s.bg}'), ${s.grad}`;
+
+        // Boy image
+        const bImg = document.getElementById("bs-img");
+        const bEmo = document.getElementById("bs-emo");
+        bImg.style.display = "block";
+        bEmo.style.display = "none";
+        bImg.src = s.boyImg;
+
+        // Animal
+        const aImg = document.getElementById("a-img");
+        const aEmo = document.getElementById("a-emo");
+        aImg.style.display = "block";
+        aEmo.style.opacity = "1";
+        aEmo.textContent = s.emoji;
+        aImg.src = s.aniImg;
+
+        // Reset state
+        document.getElementById("a-name").textContent = s.animalHe;
+        document.getElementById("ani-wrap").className = "ani-wrap sil";
+        const sa = document.getElementById("story-area");
+        sa.classList.remove("vis");
+        document.getElementById("story-card").innerHTML = "";
+        document.getElementById("enc-prompt").textContent = "מי הוא? 👀";
+        document.getElementById("enc-prompt").style.display = "block";
+        document.getElementById("enc-prompt").style.fontSize = "";
+
+        showScreen("enc");
+        banner(s.simple);
+      }
+
+      function advanceEnc() {
+        const s = STOPS[stop];
+        if (phase === 0) {
+          // Reveal
+          phase = 1;
+          document.getElementById("ani-wrap").className = "ani-wrap rev";
+          const p = document.getElementById("enc-prompt");
+          p.textContent = s.animalHe + "!";
+          p.style.fontSize = "clamp(22px,4vw,34px)";
+        } else if (phase === 1) {
+          // Show text
+          phase = 2;
+          document.getElementById("enc-prompt").style.display = "none";
+          showText(s.lines);
+        } else {
+          // Back to map
+          phase = 0;
+          if (!visited.includes(stop)) visited.push(stop);
+          setWP(stop, "visited");
+          // Update boy map badge src
+          const bBadge = document.querySelector(".boy-badge img");
+          if (bBadge) bBadge.src = s.boyImg;
+          showScreen("map");
+          setBoy(STOPS[stop].pos);
+        }
+        updateProgress();
+      }
+
+      function showText(lines) {
+        const card = document.getElementById("story-card");
+        card.innerHTML = "";
+        lines.forEach((l, i) => {
+          const p = document.createElement("p");
+          if (l.c === "sep") {
+            p.className = "sl sep";
+            p.innerHTML = "&nbsp;";
+          } else {
+            p.className = "sl " + (l.c || "");
+            p.textContent = l.t;
+            p.style.animationDelay = `${i * 0.11}s`;
+          }
+          card.appendChild(p);
+        });
+        document.getElementById("story-area").classList.add("vis");
+      }
+
+      function showPoem() {
+        const poem = document.getElementById("ret-poem");
+        if (poem.style.opacity !== "1") {
+          poem.style.opacity = "1";
+        } else {
+          showScreen("end");
+        }
+      }
+
+      function restartStory() {
+        visited = [];
+        stop = -1;
+        phase = 0;
+        buildWaypoints();
+        setBoy(HOME);
+        document.getElementById("ret-poem").style.opacity = "0";
+        showScreen("intro");
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════════════════════ */
+      function toggleTheme() {
+        const dark =
+          document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute(
+          "data-theme",
+          dark ? "light" : "dark",
+        );
+        document.getElementById("theme-btn").textContent = dark ? "☀️" : "🌙";
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   GO BACK
+═══════════════════════════════════════════════════════════ */
+      function goBack() {
+        if (busy) return;
+        switch (screen) {
+          case "enc":
+            if (phase === 2) {
+              phase = 1;
+              document.getElementById("story-area").classList.remove("vis");
+              document.getElementById("enc-prompt").style.display = "block";
+              document.getElementById("enc-prompt").textContent =
+                STOPS[stop].animalHe + "!";
+              document.getElementById("enc-prompt").style.fontSize =
+                "clamp(22px,4vw,34px)";
+            } else if (phase === 1) {
+              phase = 0;
+              document.getElementById("ani-wrap").className = "ani-wrap sil";
+              document.getElementById("enc-prompt").textContent = "מי הוא? 👀";
+              document.getElementById("enc-prompt").style.fontSize = "";
+            } else {
+              setWP(stop, "unvisited");
+              stop--;
+              showScreen("map");
+              setBoy(stop >= 0 ? STOPS[stop].pos : HOME);
+              banner("⬅️ חוזרים אחורה");
+            }
+            updateProgress();
+            break;
+          case "map":
+            if (stop >= 0) {
+              openEnc(stop);
+              phase = 2;
+              showText(STOPS[stop].lines);
+              document.getElementById("ani-wrap").className = "ani-wrap rev";
+              document.getElementById("enc-prompt").style.display = "none";
+              updateProgress();
+            }
+            break;
+          case "ret":
+            showScreen("map");
+            setBoy(GARDEN);
+            break;
+          case "end":
+            showScreen("ret");
+            document.getElementById("ret-poem").style.opacity = "1";
+            break;
+        }
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   NAVIGATION EVENTS
+═══════════════════════════════════════════════════════════ */
+      let lastT = 0,
+        lastTB = 0;
+      function safe() {
+        const now = Date.now();
+        if (now - lastT < 380) return;
+        lastT = now;
+        advance();
+      }
+      function safeBack() {
+        const now = Date.now();
+        if (now - lastTB < 380) return;
+        lastTB = now;
+        goBack();
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (["Space", "ArrowLeft", "Enter"].includes(e.code)) {
+          e.preventDefault();
+          safe();
+        }
+        if (e.code === "ArrowRight") {
+          e.preventDefault();
+          safeBack();
+        }
+      });
+      document.getElementById("app").addEventListener("click", (e) => {
+        if (e.target.tagName === "BUTTON") return;
+        safe();
+      });
+      document.addEventListener(
+        "wheel",
+        (e) => {
+          if (Math.abs(e.deltaY) < 25) return;
+          if (e.deltaY > 0) safe();
+          else safeBack();
+        },
+        { passive: true },
+      );
+      let ty = 0;
+      document.addEventListener(
+        "touchstart",
+        (e) => {
+          ty = e.changedTouches[0].clientY;
+        },
+        { passive: true },
+      );
+      document.addEventListener(
+        "touchend",
+        (e) => {
+          const dy = ty - e.changedTouches[0].clientY;
+          if (Math.abs(dy) < 28) return;
+          if (dy > 0) safe();
+          else safeBack();
+        },
+        { passive: true },
+      );
+
+      /* ═══════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════ */
+      init();
+    </script>
+  </body>
+</html>
